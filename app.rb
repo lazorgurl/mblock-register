@@ -7,6 +7,8 @@ REDIS_DB = 11
 get '/domains' do
     r = Redis.new(db: REDIS_DB)
     blocked_domains = r.keys.map {|k| [k, JSON.parse(r.get(k))]}.to_h
+    
+    content_type 'application/gzip'
     Zlib::Deflate.deflate(blocked_domains.to_json)
 end
 
