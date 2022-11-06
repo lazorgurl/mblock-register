@@ -35,7 +35,7 @@ patch '/domains' do
 
     blocked_domains = JSON.parse(Zlib::Inflate.inflate(request.body.read))
 
-    if !APPROVED_DOMAINS.contains? domain then
+    if !APPROVED_DOMAINS.include? domain then
         return [403, "#{domain} is not approved to share blocklist"]
     end
     
