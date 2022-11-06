@@ -8,8 +8,10 @@ get '/domains' do
     r = Redis.new(db: REDIS_DB)
     blocked_domains = r.keys.map {|k| [k, JSON.parse(r.get(k))]}.to_h
     
-    content_type 'application/gzip'
-    Zlib::Deflate.deflate(blocked_domains.to_json)
+    if request.accept? 'application/json' then
+        return blocked_domains.to_json
+    end    
+    return Zlib::Deflate.deflate(blocked_domains.to_json)
 end
 
 patch '/domains' do
