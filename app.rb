@@ -4,6 +4,14 @@ require 'httparty'
 
 REDIS_DB = 11
 
+
+if ENV['MBLOCK_APPROVED_DOMAINS'].nil? then
+    approved_domains = ["toot.lgbt"]
+else
+    approved_domains = ENV['MBLOCK_APPROVED_DOMAINS'].split(",")
+end
+APPROVED_DOMAINS = approved_domains
+
 get '/domains' do
     r = Redis.new(db: REDIS_DB)
     blocked_domains = r.keys.map {|k| [k, JSON.parse(r.get(k))]}.to_h
@@ -26,6 +34,11 @@ patch '/domains' do
     end
 
     blocked_domains = JSON.parse(Zlib::Inflate.inflate(request.body.read))
+
+    if !APPROVED_DOMAINS.contains? domain then
+        return [403, "#{domain} is not approved to share blocklist"]
+    end
+    
     # Verify provided token against instance 
     validation = HTTParty.get("https://#{domain}/api/v1/apps/verify_credentials", headers: {
         Authorization: authorization
