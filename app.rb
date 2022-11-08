@@ -4,13 +4,11 @@ require 'httparty'
 
 REDIS_DB = 11
 
+set :public_folder, "static/build"
 
-if ENV['MBLOCK_APPROVED_DOMAINS'].nil? then
-    approved_domains = ["toot.lgbt"]
-else
-    approved_domains = ENV['MBLOCK_APPROVED_DOMAINS'].split(",")
+get '/home' do
+    send_file File.join(settings.public_folder, 'index.html')
 end
-APPROVED_DOMAINS = approved_domains
 
 get '/domains' do
     r = Redis.new(db: REDIS_DB)
@@ -23,6 +21,13 @@ get '/domains' do
 end
 
 patch '/domains' do
+    if ENV['MBLOCK_APPROVED_DOMAINS'].nil? then
+        approved_domains = ["toot.lgbt"]
+    else
+        approved_domains = ENV['MBLOCK_APPROVED_DOMAINS'].split(",")
+    end
+    APPROVED_DOMAINS = approved_domains
+
     domain = params['domain']
     if domain.nil? then
         return [400, "expected domain query parameter"]
