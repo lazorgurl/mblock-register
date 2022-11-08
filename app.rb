@@ -6,7 +6,7 @@ REDIS_DB = 11
 
 set :public_folder, "static/build"
 
-get '/home' do
+get '/' do
     send_file File.join(settings.public_folder, 'index.html')
 end
 

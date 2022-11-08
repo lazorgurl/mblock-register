@@ -32,6 +32,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   httparty
@@ -41,4 +42,4 @@ DEPENDENCIES
   zlib
 
 BUNDLED WITH
-   2.2.3
+   2.2.33
